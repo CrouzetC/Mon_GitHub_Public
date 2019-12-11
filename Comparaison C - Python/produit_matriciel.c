@@ -1,8 +1,6 @@
 
-
 #include <stdio.h>
 #include <stdlib.h>
-
 
 void init_matrice_0(float** M, int lignes, int colonnes) {
 
@@ -119,6 +117,4 @@ int main() {
 
     return 0;
 }
-
-
 

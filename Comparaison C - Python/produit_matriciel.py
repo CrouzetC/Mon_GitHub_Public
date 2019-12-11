@@ -1,22 +1,14 @@
 
-
-#####
-#
 import time
-#
-#####
-
 
 ####################
-#
-#
 #
 def affiche_matrice(M):
     print()
     for ligne in M :
         print(ligne)
     print()
-
+#
 def resultats(A, B, C) :
     print("A :")
     affiche_matrice(A)
@@ -24,7 +16,7 @@ def resultats(A, B, C) :
     affiche_matrice(B)
     print("Résultat : C = A * B :")
     affiche_matrice(C)
-
+#
 def creation_matrices(N) :
     A = []
     B = []
@@ -34,7 +26,7 @@ def creation_matrices(N) :
         l2 = [i+j for j in range(N)]
         B.append(l2)
     return [A, B]
-
+#
 def produit_matriciel_time(A, B) :
     ''' Renvoie une liste [C, dt] où :
     - C est le résultat du produit matriciel
@@ -54,7 +46,7 @@ def produit_matriciel_time(A, B) :
 
     t2 = time.time()
     return [C, t2-t1]
-
+#
 def start_simple() :
     ''' Fait un produit entre deux matrices '''
 
@@ -66,7 +58,7 @@ def start_simple() :
     B = AB[1]
     C = produit_matriciel_time(A, B)[0]
     resultats(A, B, C)
-
+#
 def start_time() :
     ''' Donne des durées du produits matriciels pour différentes tailles de matrices '''
 
@@ -83,14 +75,8 @@ def start_time() :
         print("Taille : " + str(tailles[i]) + " ; durée : " + str(durees_ms[i]) + " ms ; racine cubique de la durée en ms : " + str(durees_ms[i]**(1/3)) + ".")
     print()
 #
-#
-#
 ####################
 
 
-start_time() # Fait un produit entre 2 matrices
-
-
-
-
+start_time() # Fait un produit entre 2 matrices et affiche la durée
 
