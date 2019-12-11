@@ -6,11 +6,11 @@
 
 ### flags #################################################################
 
-MY_INCLUDE = -I./src/
+MY_INCLUDE = -I./src
 
-GL_INCLUDE = -I../common/freeglut/include
+GL_INCLUDE = -I../common/freeglut/include/
 
-LINKER_FLAGS = -Wl,-R,./lib/  # indique au linker où sont les libs dynamiques (liblut.so(.3...))
+LINKER_FLAGS = -Wl,-R,./lib  # indique au linker où sont les libs dynamiques (liblut.so(.3...))
 
 LIB_FLAGS = -lglut -lGLU -lGL -lXrandr -lXxf86vm -lX11
 
@@ -35,7 +35,7 @@ clean:
 
 run:
 #	export LD_LIBRAIRY_PATH=$(LD_LIBRAIRY_PATH):./  # n'est plus nécessaire
-	cd bin/ && ./Network
+	cd bin/ && ./Simulation
 
 ###########################################################################
 
@@ -45,7 +45,7 @@ Simulation: bin/Simulation
 ### final program #########################################################
 
 bin/Simulation: $(BASE_O) $(SIMULATION_O)
-	g++ -fPIC -o bin/Simulation $(SIMULATION_O) $(BASE_O) $(LINKER_FLAGS) $(MY_INCLUDE) $(GL_INCLUDE) $(LIB_FLAGS) -L./bin/lib/
+	g++ -fPIC -o bin/Simulation $(SIMULATION_O) $(BASE_O) $(LINKER_FLAGS) $(MY_INCLUDE) $(GL_INCLUDE) $(LIB_FLAGS) -L./bin/lib
 
 ### object files - bases ###################################################
 
