@@ -17,7 +17,6 @@ typedef struct _particle {
 typedef struct _phys_constants {
 
 	double h_barre;    // constante de Plank réduite
-
 	double eps_0;      // permittitivité électrique du vide
 	double eps_0_4pi;  // = eps_0 * 4 * PI
 

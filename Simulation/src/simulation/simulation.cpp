@@ -79,8 +79,8 @@ void add_particle (simulation* simul, particle* p) {
 
 void simulation_next_step (simulation* simul) {
 
-	for (int i = 0; i < simul->particles->nb; i++) {
-
+	for (int i = 0; i < simul->particles->nb; i++)
+    {
 		particle_next_step(simul, (particle*)simul->particles->elems[i]);
 	}
 }
@@ -88,15 +88,15 @@ void simulation_next_step (simulation* simul) {
 void particle_next_step (simulation* simul, particle* p) {
 
 	//
-	int next_step_quality = 1;
+	int next_step_quality = 0;
 
 	double dt = simul->sim_params->dt;
 
 	complex_1D* derivative = wave_func_derivative(simul, p);
 
-	filter_order_1_rigorous(&derivative, 0.005);
+	// filter_order_1_rigorous(&derivative, 0.005);
 
-	  // On calcule la nouvelle fonction d'onde et on actualise 'p->last_wave_functions' :
+	// On calcule la nouvelle fonction d'onde et on actualise 'p->last_wave_functions' :
 	next_step_with_derivative(p->last_wave_functions, NB_LAST_WAVE_FUNC, derivative, dt, next_step_quality);
 	
 	destroy_complex_1D(derivative);

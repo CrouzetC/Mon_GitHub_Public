@@ -10,7 +10,7 @@ MY_INCLUDE = -I./src
 
 GL_INCLUDE = -I../common/freeglut/include/
 
-LINKER_FLAGS = -Wl,-R,./lib  # indique au linker où sont les libs dynamiques (liblut.so(.3...))
+LINKER_FLAGS = -Wl,-R,./lib  # indicate to the linker where are the dynamic librairies (liblut.so(.3...))
 
 LIB_FLAGS = -lglut -lGLU -lGL -lXrandr -lXxf86vm -lX11
 
@@ -34,7 +34,7 @@ clean:
 	rm -f bin/Simulation
 
 run:
-#	export LD_LIBRAIRY_PATH=$(LD_LIBRAIRY_PATH):./  # n'est plus nécessaire
+#	export LD_LIBRAIRY_PATH=$(LD_LIBRAIRY_PATH):./  # not necessary anymore, thanks to "-Wl,-R,./lib/"
 	cd bin/ && ./Simulation
 
 ###########################################################################
@@ -51,30 +51,30 @@ bin/Simulation: $(BASE_O) $(SIMULATION_O)
 
 base: $(BASE_O)
 
-$(O)graphic.o:
+$(O)graphic.o:           $(BASE)graphic.cpp
 	g++ $(MY_INCLUDE) -c $(BASE)graphic.cpp       -o $(O)graphic.o
 
-$(O)graphic_elem.o:
+$(O)graphic_elem.o:      $(BASE)graphic_elem.cpp
 	g++ $(MY_INCLUDE) -c $(BASE)graphic_elem.cpp  -o $(O)graphic_elem.o
 
-$(O)picture.o:
+$(O)picture.o:           $(BASE)picture.cpp
 	g++ $(MY_INCLUDE) -c $(BASE)picture.cpp       -o $(O)picture.o
 
-$(O)complex.o:
+$(O)complex.o:           $(BASE)complex.cpp
 	g++ $(MY_INCLUDE) -c $(BASE)complex.cpp       -o $(O)complex.o
 
-$(O)input.o:
+$(O)input.o:             $(BASE)input.cpp
 	g++ $(MY_INCLUDE) -c $(BASE)input.cpp         -o $(O)input.o
 
-$(O)util.o:
+$(O)util.o:              $(BASE)util.cpp
 	g++ $(MY_INCLUDE) -c $(BASE)util.cpp          -o $(O)util.o
 
 ### object files - simulation #############################################
 
-$(O)simulation_main.o:
-	g++ $(MY_INCLUDE) $(GL_INCLUDE) -c $(SIMULATION)simulation_main.cpp -o $(O)simulation_main.o
+$(O)simulation_main.o:   $(SIMULATION)simulation_main.cpp
+	g++ $(MY_INCLUDE) -c $(SIMULATION)simulation_main.cpp -o $(O)simulation_main.o  $(GL_INCLUDE)
 
-$(O)simulation.o:
-	g++ $(MY_INCLUDE) -c $(SIMULATION)simulation.cpp  -o $(O)simulation.o
+$(O)simulation.o:        $(SIMULATION)simulation.cpp
+	g++ $(MY_INCLUDE) -c $(SIMULATION)simulation.cpp      -o $(O)simulation.o
 
 ###########################################################################

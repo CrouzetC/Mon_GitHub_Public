@@ -49,13 +49,6 @@ simulation* simul = NULL;
 complex_1D* delta = NULL;  // = derivative * dt
 complex_1D* fourier_transform = NULL;
 
-////  Grid  ////
-
-scalar_2D* field_for_input = NULL;
-input_grid_for_scalar2D* input_grid = NULL;
-graphic_set* input_grid_graphic_set = NULL;
-int is_created_grid = 0;
-
 
           ////////////////////////////////////////////////
 
@@ -79,7 +72,7 @@ void refresh_simulation_display() {
 
 		complex_graph2 = create_complex_1D_graph( delta,  // au lieu de : particle1->last_wave_functions[0],
 												 150, window_height/2 - 150, 100,
-												 0, REAL);
+												 0, MODULE_WITH_ARG);
 		
 		add_graphic_elem(set, complex_graph2, COMPLEX_1D_GRAPH);
 	}
@@ -111,108 +104,6 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 			glutDestroyWindow(glutGetWindow());
 			return;
 
-		case 'r' :
-
-			if (is_created_grid == 0) {
-
-				field_for_input = create_scalar2D(16, 8);
-
-				input_grid = create_scalar2D_input_grid(field_for_input, 200, 200, 20);
-
-				input_grid_graphic_set = create_set();
-
-				add_grid_to_graphic_set(input_grid_graphic_set, input_grid);
-				add_graphic_elem(set, input_grid_graphic_set, GRAPHIC_SET);
-
-				is_created_grid = 1;
-			}
-			else {
-
-				// Nom du fichier :
-				char* file_path = (char*) malloc (256*sizeof(char));
-				const char* path = "D:\\Fichiers\\Pictures\\alphabet_flat\\";
-				int pos = 0;
-				while (path[pos] != '\0' && pos <= 250) {
-					file_path[pos] = path[pos];
-					pos ++;
-				}
-				file_path[255] = '\0';
-				
-				fprintf(stdout, "Saisir caractere : ");
-				char space;
-
-            #ifdef _WIN32
-                fscanf_s(stdin, "%c", file_path + pos);
-                fscanf_s(stdin, "%c", &space);
-            #else
-				fscanf(stdin, "%c", file_path + pos);
-				fscanf(stdin, "%c", &space);
-            #endif
-
-				// file_path[pos]   = ' ';
-				file_path[pos+1] = '.';
-				file_path[pos+2] = 'p';
-				file_path[pos+3] = 'i';
-				file_path[pos+4] = 'c';
-				file_path[pos+5] = '\0';
-
-				// création et sauvegarde de l'image :
-				
-				picture* pic = scalar2D_to_picture(field_for_input, BLACK);
-
-				save_picture(file_path, pic, 0);
-
-				// Remise à zéro de 'field' :
-				for (int i = 0; i < field_for_input->width * field_for_input->height; i++) {
-					field_for_input->data[i] = 0.0;
-				}
-
-				// free :
-				destroy_picture(pic);
-				free(file_path);
-			}
-
-			break;
-
-		case 't' : 
-		
-				{  // permet de ne pas avoir de problème avec le fait que l'on déclare des variables dans un "case 't' : ... break;"
-
-				fprintf(stderr, "ATTENTION : sur Linux, il faut créer le fichier ' .pic' (caractere ESPACE), en effet un fichier nommé ainsi ne peut pas être copié sur Windows.");
-
-				//
-				char chars_to_display[] = "abcdefghijklmnopqrstuvwxyz ceci est un message, veuillez ne pas y preter attention.";
-
-				// on copie le principal de l'adresse :
-				char* file_path = (char*) malloc (256 * sizeof(char));
-				const char* path = "D:\\Fichiers\\Pictures\\alphabet_flat\\z.pic";
-				int pos = 0;
-				while (path[pos] != '\0' && pos <= 250) {
-					file_path[pos] = path[pos];
-					pos++;
-				}
-				file_path[pos] = '\0';
-
-				// on repère la position du caractère à changer :
-				pos = 0;
-				while (file_path[pos] != 'z') {
-					pos++;
-				}
-
-				// on affiche les divers caractères voulus :
-
-				for (int i = 0; i < 83; i++) {
-
-					file_path[pos] = chars_to_display[i];
-
-					picture* pic = read_picture(file_path, 100 + i * 8, 100);
-
-					add_graphic_elem(alpha_blend_set, pic, PICTURE);
-
-				}
-			
-			} break;
-
 		case 'd':
 			if (is_created_simulation) {
 				destroy_complex_1D(delta);
@@ -227,6 +118,62 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 				refresh_simulation_display();
 			}
 			break;
+
+		case 's':
+			
+			if (!is_created_simulation) {
+
+				argument_disk = create_argument_reference(window_width - 151, window_height - 151, 101);
+				add_graphic_elem(alpha_blend_set, argument_disk, PICTURE);
+
+				simul = create_simulation(1, 0.01, 0.001, 512);
+
+				particle1 = create_particle(1.0, -1.0, simul->sim_params->dx, simul->field_V->length);
+				add_particle(simul, particle1);
+
+				for (int i = 0; i < NB_LAST_WAVE_FUNC; i++) {
+					make_centered_gaussian(particle1->last_wave_functions[i], 0.1);
+					normalize_module_square(particle1->last_wave_functions[i]);
+				}
+
+				delta = wave_func_derivative(simul, particle1);
+
+				for (int i = 0; i < particle1->last_wave_functions[0]->length; i++) {
+					delta->re[i] *= 10*simul->sim_params->dt;
+					delta->im[i] *= 10 * simul->sim_params->dt;
+				}
+
+				fourier_transform = create_complex_1D(simul->field_V->length, 1.0 / simul->sim_params->dx);
+				fft(particle1->last_wave_functions[0], fourier_transform, 0);
+
+                //for (int i = 0; i < 512; i++) {
+                //    fourier_transform->re[i] = 0.1;
+                //    fourier_transform->im[i] = 0.0;
+                //}
+                //fft(fourier_transform, particle1->wave_function, 1);
+
+				complex_graph1 = create_complex_1D_graph(particle1->last_wave_functions[0],
+														150, window_height/2 + 50, 100,
+														1, MODULE_WITH_ARG);
+
+				complex_graph2 = create_complex_1D_graph( delta,  // au lieu de : particle1->last_wave_functions[0],
+														150, window_height/2 - 150, 100,
+														0, MODULE_WITH_ARG);
+
+				complex_graph3 = create_complex_1D_graph(fourier_transform,
+														150, window_height/2 - 350, 100,
+														0, MODULE_WITH_ARG);
+
+				add_graphic_elem(set, complex_graph1, COMPLEX_1D_GRAPH);
+				add_graphic_elem(set, complex_graph2, COMPLEX_1D_GRAPH);
+				add_graphic_elem(set, complex_graph3, COMPLEX_1D_GRAPH);
+
+				is_created_simulation = 1;
+			}
+			break;
+
+
+        // Filtrages et FFT :
 
 		case 'w':
 			if (is_created_simulation) {
@@ -280,59 +227,6 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 			}
 			break;
 
-		case 's':
-			
-			if (!is_created_simulation) {
-
-				argument_disk = create_argument_reference(window_width - 151, window_height - 151, 101);
-				add_graphic_elem(alpha_blend_set, argument_disk, PICTURE);
-
-				simul = create_simulation(1, 0.01, 0.001, 512);
-
-				particle1 = create_particle(1.0, -1.0, simul->sim_params->dx, simul->field_V->length);
-				add_particle(simul, particle1);
-
-				for (int i = 0; i < NB_LAST_WAVE_FUNC; i++) {
-					make_centered_gaussian(particle1->last_wave_functions[i], 0.1);
-					normalize_module_square(particle1->last_wave_functions[i]);
-				}
-
-				delta = wave_func_derivative(simul, particle1);
-
-				for (int i = 0; i < particle1->last_wave_functions[0]->length; i++) {
-					delta->re[i] *= 10*simul->sim_params->dt;
-					delta->im[i] *= 10 * simul->sim_params->dt;
-				}
-
-				fourier_transform = create_complex_1D(simul->field_V->length, 1.0 / simul->sim_params->dx);
-				fft(particle1->last_wave_functions[0], fourier_transform, 0);
-
-                //for (int i = 0; i < 512; i++) {
-                //    fourier_transform->re[i] = 0.1;
-                //    fourier_transform->im[i] = 0.0;
-                //}
-                //fft(fourier_transform, particle1->wave_function, 1);
-
-				complex_graph1 = create_complex_1D_graph(particle1->last_wave_functions[0],
-														150, window_height/2 + 50, 100,
-														1, REAL);
-
-				complex_graph2 = create_complex_1D_graph( delta,  // au lieu de : particle1->last_wave_functions[0],
-														150, window_height/2 - 150, 100,
-														0, MODULE_WITH_ARG);
-
-				complex_graph3 = create_complex_1D_graph(fourier_transform,
-														150, window_height/2 - 350, 100,
-														0, MODULE_WITH_ARG);
-
-				add_graphic_elem(set, complex_graph1, COMPLEX_1D_GRAPH);
-				add_graphic_elem(set, complex_graph2, COMPLEX_1D_GRAPH);
-				add_graphic_elem(set, complex_graph3, COMPLEX_1D_GRAPH);
-
-				is_created_simulation = 1;
-			}
-			break;
-
 		default:
 			break;
 	}
@@ -349,30 +243,17 @@ void mouse(int button, int state, int x, int y) {    // Attention : (0;0) en HAU
 
 	glutPostRedisplay();  // Indique la fenêtre comme étant à rafraichir
 
-	if (state == GLUT_DOWN) {
-
+	if (state == GLUT_DOWN)
+    {
 		buttonState |= 1 << button;
-	}
-	else if (state == GLUT_UP) {
-
+    }
+    else if (state == GLUT_UP)
+    {
 		buttonState = 0;
 	}
 	
 	x_mouse = x;
 	y_mouse = window_height - 1 - y;
-
-	// input_grid :
-	if (is_created_grid && button == 0 && state == GLUT_DOWN) {
-
-		remove_graphic_elem(set, input_grid_graphic_set);
-		destroy_set(input_grid_graphic_set);
-		input_grid_graphic_set = create_set();
-
-		check_for_input(input_grid, x_mouse, y_mouse);
-
-		add_grid_to_graphic_set(input_grid_graphic_set, input_grid);
-		add_graphic_elem(set, input_grid_graphic_set, GRAPHIC_SET);
-	}
 
 	return;
 }
@@ -384,18 +265,6 @@ void motion (int x, int y) {
 	int dx, dy;
 	dx = x - x_mouse;
 	dy = (window_height - 1 - y) - y_mouse;
-
-	/* affichage network :
-	if (is_created_net) {
-
-		x_net += dx;
-		y_net += dy;
-
-		set_node_x_y (net, x_net, y_net);
-
-		shift_graphic_set(network_graphic_set, dx, dy);
-		shift_graphic_set(graphic_set_for_selection, dx, dy);
-	}*/
 
 	x_mouse = x;
 	y_mouse = window_height - 1 - y;
@@ -441,7 +310,6 @@ void display(void) {
 
 int main(int argc, char **argv) {
 
-
 	glutInit(&argc, argv);
 	glutInitWindowSize(window_width, window_height);
 	glutInitWindowPosition(100, 100);
@@ -458,30 +326,6 @@ int main(int argc, char **argv) {
 
 	background = create_background (window_width, window_height, 3);
 	add_graphic_elem(set, background, PICTURE);
-
-
-	
-	//add_graphic_elem(set, create_square(700, 40, 100, 100, 1.0, 1.0, 0.0, 1.0),        SQUARE);
-	//add_graphic_elem(set, create_empty_square(700, 200, 100, 100, 1.0, 1.0, 0.0, 1.0), EMPTY_SQUARE);
-	//add_graphic_elem(set, create_picture(100, 50, 200, 100), PICTURE);
-	//add_graphic_elem(set, create_curved_link(50, 500, 500, 200, NULL, NULL), VERTEX_SET);
-	//add_graphic_elem(set, create_square(100, 100, 100, 100, 1.0, 1.0, 1.0, 1.0), SQUARE);
-	//add_graphic_elem(set, create_curved_link(100, 100, 199, 199, NULL, NULL), VERTEX_SET);
-	
-
-	// save_picture( (char*) "F:\\Fichiers\\Pictures\\test.pic", create_picture(0, 0, 10, 4), 0);
-
-	/*
-	FILE* f = fopen("D:\\a", "w");
-	int a = 512355;
-	fwrite(&a, sizeof(int), 1, f);
-	fclose(f);
-	int r;
-	f = fopen("D:\\a", "r");
-	fread(&r, sizeof(int), 1, f);
-	fclose(f);
-	printf("%d\n", r);
-	*/
 
 	glutMainLoop();
 
