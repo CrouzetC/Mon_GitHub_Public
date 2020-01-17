@@ -1,0 +1,8 @@
+
+Here is a Python program that simulates the creation of visual patters (stains, lines,...) similar to some animal's coats
+(Alan Turing introduced this method in the article "The Chemical Basis of Morphogenesis").
+
+It can simply be launched in a terminal using "python3 morphogenesis.py" (you may get errors using PythonX where X < 3).
+
+The librairies matplotlib and numpy must be installed.
+

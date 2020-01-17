@@ -64,7 +64,7 @@ def AfficheSauv ( tableB , adresse, affiche, N ) :
 #
 #### Programme Principal :
 
-adresse = 'D:\\'   # Adresse d'enregistrement des images
+adresse = './'   # Adresse d'enregistrement des images
 
 print("")
 print("--#--#--   Projet d'informatique  --#--#--")
@@ -72,11 +72,11 @@ print("")
 print("--#--#--   Taches de Turing  --#--#--")
 print("")
 print("Saisissez l'adresse du fichier de sauvegarde")
-print("( saisir N pour sauvegarder dans " + adresse + " ) :")
+print("( par exemple : D:\\ ; sinon saisir N pour sauvegarder dans " + adresse + " ) :")
 demande1 = input("")
 
 if demande1 != 'N' :
-    adresse = Demande1
+    adresse = demande1
 
 print("")
 print("Voulez-vous saisir la taille du tableau (taper 'Y'),")
@@ -91,7 +91,7 @@ else:
         longTableY = 100   # Hauteur des tableaux de valeurs
 
 
-# Creation du tableau de valeurs (et première initialisation).
+# Creation du tableau de valeurs (et premiere initialisation).
 
 TableA = []
 TableB = []
@@ -148,14 +148,14 @@ DispersionB = 0.105
 
 ###
 #
-# A correspond à l'espece U et B correspond a V.
+# A correspond a l'espece U et B correspond a V.
 # Il faut afficher la concentration de B.
 #
 ###
 
 print("Début.")
-print("=> Vous pouver interrompre le processus quand bon vous semble.")
-print("   Les résultats sont enregistrés au fur et à mesure.")
+print("=> Vous pouvez interrompre le processus quand bon vous semble.")
+print("   Les résultats sont enregistrés au fur et a mesure.")
 
 Netape = 0
 
@@ -197,7 +197,7 @@ while 1==1:
             TableA2[i][j] = TableA2[i][j] -  TableA[i][j] * (TableB[i][j])*(TableB[i][j])  +   F * (1- TableA[i][j] )
 
             # Dispersion de B :
-            TableB2[i][j] = TableB[i][j] +    DispersionB * ( (  TableB[iplus1][j] + TableB[imoins1][j]  -  (2 * TableB[i][j])  )  +  (  TableB[i][jplus1] + TableB[i][jmoins1]  -  (2 * TableB[i][j])  ) )  /   4                 ## A Completer
+            TableB2[i][j] = TableB[i][j] +    DispersionB * ( (  TableB[iplus1][j] + TableB[imoins1][j]  -  (2 * TableB[i][j])  )  +  (  TableB[i][jplus1] + TableB[i][jmoins1]  -  (2 * TableB[i][j])  ) )  /   4       ## A Completer
             
             # Evolution chimique de la concentration de B :
             TableB2[i][j] = TableB2[i][j] +   TableA[i][j] * (TableB[i][j])*(TableB[i][j])  -  (F+k) * TableB[i][j]

@@ -1,0 +1,9 @@
+
+Here is a Python program that divides a polygon into triangles (given the list of the points' coordinates, and the list of edges (edge = couple of points)).
+
+It can simply be launched in a terminal using "python polygon_triangulation.py".
+
+A window showing a polygon should appear, close it and the program will continue (showing other windows as you successively close them).
+
+The librairy pylab must be installed.
+

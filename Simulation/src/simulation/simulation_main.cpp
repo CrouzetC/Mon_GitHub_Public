@@ -70,9 +70,9 @@ void refresh_simulation_display() {
 		remove_graphic_elem(set, complex_graph2);
 		destroy_complex_1D_graph(complex_graph2);
 
-		complex_graph2 = create_complex_1D_graph( delta,  // au lieu de : particle1->last_wave_functions[0],
+		complex_graph2 = create_complex_1D_graph(particle1->last_wave_functions[0],
 												 150, window_height/2 - 150, 100,
-												 0, MODULE_WITH_ARG);
+												 0, REAL);
 		
 		add_graphic_elem(set, complex_graph2, COMPLEX_1D_GRAPH);
 	}
@@ -156,9 +156,9 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 														150, window_height/2 + 50, 100,
 														1, MODULE_WITH_ARG);
 
-				complex_graph2 = create_complex_1D_graph( delta,  // au lieu de : particle1->last_wave_functions[0],
+				complex_graph2 = create_complex_1D_graph(particle1->last_wave_functions[0],
 														150, window_height/2 - 150, 100,
-														0, MODULE_WITH_ARG);
+														0, REAL);
 
 				complex_graph3 = create_complex_1D_graph(fourier_transform,
 														150, window_height/2 - 350, 100,

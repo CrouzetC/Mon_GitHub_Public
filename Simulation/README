@@ -1,0 +1,49 @@
+
+To compile the project, use (in this directory) :
+
+    make all
+
+Then to run the program use :
+
+    make run
+
+WARNING : the program uses OpenGL, even if there are the librairy's files in bin/lib,
+          you may encounter issues if you haven't OpenGL's dependencies installed !
+
+          This dependencies are in : "[repository address]/common/freeglut - all required .so files/"
+          I'm sorry that I didn't just included them into this project.
+
+
+How does the program works ?
+
+* when the grey window appears, press 's' on your keyboard.
+
+* you will see 3 curves and a disk in the top right corner (it shows which color represents which argument, for complex values).
+  There are no scales because they wouldn't mean a lot since I didn't used the actual values of the physical constants.
+
+  * the first curve represents the particle's wavefunction,
+
+  * the second curve represents the real part of the particle's wavefunction,
+
+  * the third curve represents the Fourier Transform of the particle's wavefunction.
+
+(the Fourier Transform is calculated using a non-recursive in place Fast Fourier Trasform method (FFT)).
+
+* press 'd' on your keyboard to go to the next "step"
+
+  (i.e. to make the simulation advance in time (here again, I don't give a value for dt because the physical constants don't have the right values).
+
+* the press 'd' again and again...
+
+* I implemented some low-pass filters that can be used by pressing 'w', 'x', and 'v',
+
+  but the results will be disapointing if you continue the simulation after filtering the wavefunction.
+
+
+WARNING :
+
+You may see that the simulation degenerates after some steps.
+I think it is because the approximation errors are amplified (and maybe the "dt" is not small enough).
+
+How does this simulation work : I simply applied Euler's method with Schrodinger's equation.
+

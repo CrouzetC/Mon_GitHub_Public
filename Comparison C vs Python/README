@@ -1,0 +1,9 @@
+
+Here are 2 programs realizing a matricial product in the same way.
+
+One is coded in Python, the other in C.
+
+I made this to compare the speed of execution for those 2 languages.
+
+The Python program's execution was 30 times slower.
+

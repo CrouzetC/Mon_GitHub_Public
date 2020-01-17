@@ -1,0 +1,7 @@
+
+Here is the installer for a programm I made (with 2 coworkers) in the last year of high school (thus the program is absolutely not optimized).
+
+It is a software that allows the user to cipher and decipher a message with Vigenere's method.
+
+But overall, it allows to break the code (decipher a message without knowing the key) if the message is long enough.
+
