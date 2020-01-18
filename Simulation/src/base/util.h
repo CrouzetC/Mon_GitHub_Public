@@ -69,6 +69,8 @@ void      destroy_scalar2D  (scalar_2D* field);
 FILE* new_file(char* path, int number_at_end);
 
 
+float get_time_in_seconds();
+
 int max (int a, int b);
 
 float  get_rand_float();  // renvoie un flottant entre 0.0 et 1.0 (loi uniforme)

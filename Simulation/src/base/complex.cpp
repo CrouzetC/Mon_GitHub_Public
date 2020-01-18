@@ -883,20 +883,19 @@ void  complex_1D_graph_to_picture(picture* pic, complex_1D_graph* graph) {
 		x = graph->x_0 + i;
 		pix = graph->pixels + i;
 
-		if (graph->line_width <= 0) {
-
+		if (graph->line_width <= 0)
+		{
 			y_start = graph->y[i] >= 0 ? graph->y_0  : graph->y_0 + graph->y[i];
 			y_end   = graph->y[i] >= 0 ? graph->y_0 + graph->y[i] : graph->y_0 ;
 		}
-		else {
-
+		else
+		{
 			y_start = graph->y_0 + graph->y[i] - (graph->line_width-1) / 2;
 			y_end   = graph->y_0 + graph->y[i] - (graph->line_width-1) / 2 + graph->line_width - 1;
 
 			// pour que la ligne ne soit pas discontinue,
 			// s'il y a trop d'écartement entre les points :
 			modify_Y_start_end_to_link_points(&y_start, &y_end, graph, i);
-
 		}
 
 		if (y_start < 0)
@@ -939,16 +938,22 @@ void modify_Y_start_end_to_link_points (int* y_start, int* y_end, complex_1D_gra
 	// (ou sur une extrémité du graphe)
 	if (i > 0) {
 		if (graph->y[i] > graph->y[i-1])
-			*y_start -= ( graph->y[i] - graph->y[i-1] ) / 2;  // pas de '-1' ici (car le point équidistant des 2 valeurs successives sera traité lors du traitement du point suivant)
+			*y_start -= ( graph->y[i] - graph->y[i-1] ) / 2;  // pas de '-1' ici
 		if (graph->y[i] < graph->y[i-1])
 			*y_end   += ( graph->y[i-1] - graph->y[i] ) / 2;  // pas de '-1' ici
 	}
+	// Remarque : le point équidistant de 2 valeurs successives est "traité" par le point suivant.
+	// il faudra donc : pour la comparaison i/i-1 (= on est sur le point suivant  ) : faire : (... + 1) /2
+	//                  pour la comparaison i/i+1 (= on est sur le point précédent) : faire : (...) /2
+	// cependant, ici le nombre de points intermédiaires à traiter est : | y[i] - y[i-1] | - 1 ou | y[i+1] - y[i] | - 1,
+	// il y a un "-1" car le nombre de points au total (extrémités + intermédiaires) est : | différence | + 1,
+	// et puisqu'on retire les 2 points des extrémités (déjà pris en compte), on obtient : | différence | + 1 - 2 = | différence | - 1,
+	// donc au lieu de faire +1 dans le 'if' ci-dessus, on fait -1 dans le 'if' ci-dessous.
 	if (i < graph->size - 1) {
-		fprintf(stdout, "a");
 		if (graph->y[i+1] > graph->y[i])
-			*y_end    += (graph->y[i+1] - graph->y[i] - 1) / 2;  // il faut '-1' ici
+			*y_end   += (graph->y[i+1] - graph->y[i] - 1) / 2;  // il faut '-1' ici
 		if (graph->y[i+1] < graph->y[i])
-			* y_start -= (graph->y[i+1] - graph->y[i] - 1) / 2;  // il faut '-1' ici
+			*y_start -= (graph->y[i] - graph->y[i+1] - 1) / 2;  // il faut '-1' ici
 	}
 	return;
 }

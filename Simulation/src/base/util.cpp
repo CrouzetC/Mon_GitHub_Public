@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "util.h"
 
 
@@ -216,6 +217,11 @@ FILE* new_file (char* path, int number_at_end) {
 	free(file_path);
 
 	return file;
+}
+
+float get_time_in_seconds() {
+    float time = ((float)clock()) / CLOCKS_PER_SEC;
+    return time;
 }
 
 int max (int a, int b) {
