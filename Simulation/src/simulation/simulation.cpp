@@ -136,7 +136,7 @@ complex_1D* wave_func_derivative (simulation* simul, particle* p) {
 		field_V_times_wave_func.re = simul->field_V->data[i] * wave_func.re;
 		field_V_times_wave_func.im = simul->field_V->data[i] * wave_func.im;
 
-		derivative->re[i] = (-h_barre * h_barre / (2 * p->m) * laplacian.im + field_V_times_wave_func.im) / h_barre;
+		derivative->re[i] =  (-h_barre * h_barre / (2 * p->m) * laplacian.im + field_V_times_wave_func.im) / h_barre;
 		derivative->im[i] = -(-h_barre * h_barre / (2 * p->m) * laplacian.re + field_V_times_wave_func.re) / h_barre;
 
 	}

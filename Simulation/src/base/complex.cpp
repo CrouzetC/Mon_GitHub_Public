@@ -108,8 +108,6 @@ complex get_value (complex_1D* field, int index, behaviour_at_border MODE) {
 
 complex_1D* derivative_1D_field (complex_1D* field, int shift_direction, int quality, behaviour_at_border MODE) {
 
-	//// SEUL le cas quality == 0 est pris en charge, ici
-
 	complex_1D* derivative = create_complex_1D(field->length, field->dx);
 	double dx = field->dx;
 
@@ -275,7 +273,6 @@ void next_step_with_derivative (complex_1D** fields_tab, int size_fields_tab, co
     switch (quality) {
 
     case 1:
-		fprintf(stdout,"AZEAZE");
 		for (int i = 0; i < new_field->length; i++) {
 			  // MODE (mis à ZERO ci-dessous) est inutile ici.
 			values[0] = get_value(fields_tab[0], i, ZERO);  // à t-4

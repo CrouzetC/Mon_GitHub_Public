@@ -1,15 +1,6 @@
 
 #pragma once
 
-/* A SUPPRIMER :
-#include "picture.h"
-#include "graphic_elem.h"
-#include "complex.h"  // pour 'complex_1D_graph'
-
-struct _picture;
-typedef struct _picture picture;
-*/
-
 
 /*** Définitions ***/
 
@@ -58,6 +49,8 @@ typedef struct _picture picture;
 
 /*** Fonctions : ***/
 
+  // il faut avoir : GRAPHIC_SET_BLOC_SIZE >= 2
+#define GRAPHIC_SET_BLOC_SIZE 20
 graphic_set* create_set   ();
 pixel*       create_pixel (float r, float g, float b, float a);
 void  destroy_set   (graphic_set* set);

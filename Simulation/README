@@ -1,4 +1,9 @@
 
+
+TL;DR : use "make all run" in this directory, then when the window appears : Press 's', then press 'd' again, again and again.
+	Errors may be due to the absence of the required librairies.
+
+
 To compile the project, use (in this directory) :
 
     make all
@@ -39,11 +44,6 @@ How does the program works ?
 
   but the results will be disapointing if you continue the simulation after filtering the wavefunction.
 
-
-WARNING :
-
-You may see that the simulation degenerates after some steps.
-I think it is because the approximation errors are amplified (and maybe the "dt" is not small enough).
 
 How does this simulation work : I simply applied Euler's method with Schrodinger's equation.
 

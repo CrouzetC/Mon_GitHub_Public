@@ -12,7 +12,7 @@
 
 graphic_set* create_set() {
 
-	graphic_set* set = (graphic_set*) malloc(sizeof(graphic_set));
+	graphic_set* set = (graphic_set*) malloc (sizeof(graphic_set));
 	
 	set->nb = 0;
 	set->elements = NULL;
@@ -129,24 +129,19 @@ void shift_graphic_set (graphic_set* set, int dx, int dy) {
 
 void add_graphic_elem (graphic_set* set, void* elem, graphic_type TYPE) {
 
-	if (set->nb == 0) {
-		set->elements       = (void**) malloc(sizeof(void*));
-		set->elements_types = (graphic_type*) malloc(sizeof(graphic_type));
-		set->elements[0]       = elem;
-		set->elements_types[0] = TYPE;
-		set->nb = 1;
-	}
-	else {
-		set->elements       = (void**) realloc(set->elements, (set->nb+1) * sizeof(void*));
-		set->elements_types = (graphic_type*) realloc(set->elements_types, (set->nb+1) * sizeof(graphic_type));
-		set->elements[set->nb]       = elem;
-		set->elements_types[set->nb] = TYPE;
-		set->nb++;
-	}
+    if (set->nb % GRAPHIC_SET_BLOC_SIZE == 0)
+    {
+        set->elements       = (void**)        realloc (set->elements      , (set->nb + GRAPHIC_SET_BLOC_SIZE) * sizeof(void*));
+        set->elements_types = (graphic_type*) realloc (set->elements_types, (set->nb + GRAPHIC_SET_BLOC_SIZE) * sizeof(graphic_type));
+    }
+	set->elements      [set->nb] = elem;
+	set->elements_types[set->nb] = TYPE;
+	set->nb++;
+
 	return;
 }
 
-void remove_graphic_elem(graphic_set* set, void* elem) {
+void remove_graphic_elem (graphic_set* set, void* elem) {
 
 	int position = 0;
 
@@ -164,8 +159,18 @@ void remove_graphic_elem(graphic_set* set, void* elem) {
 		set->elements_types[i] = set->elements_types[i+1];
 	}
 
-	set->elements = (void**) realloc(set->elements, (set->nb - 1) * sizeof(void*));
-	set->elements_types = (graphic_type*) realloc (set->elements_types, (set->nb - 1) * sizeof(graphic_type));
+    if (set->nb == 1)
+    {
+        free(set->elements);
+        free(set->elements_types);
+	    set->elements       = NULL;
+	    set->elements_types = NULL;
+    }
+    else if (set->nb % GRAPHIC_SET_BLOC_SIZE == 1 && set->nb != 0)
+    {
+	    set->elements       = (void**)        realloc (set->elements      , (set->nb - GRAPHIC_SET_BLOC_SIZE) * sizeof(void*));
+	    set->elements_types = (graphic_type*) realloc (set->elements_types, (set->nb - GRAPHIC_SET_BLOC_SIZE) * sizeof(graphic_type));
+    }
 	set->nb -= 1;
 
 	return;

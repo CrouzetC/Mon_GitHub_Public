@@ -49,6 +49,13 @@ simulation* simul = NULL;
 complex_1D* delta = NULL;  // = derivative * dt
 complex_1D* fourier_transform = NULL;
 
+//
+int n = 512;
+int dimension = 1;
+float dxyz = 0.1;
+float dt = 0.0001;
+int nb_steps = 100;
+
 
           ////////////////////////////////////////////////
 
@@ -70,10 +77,18 @@ void refresh_simulation_display() {
 		remove_graphic_elem(set, complex_graph2);
 		destroy_complex_1D_graph(complex_graph2);
 
-		complex_graph2 = create_complex_1D_graph(particle1->last_wave_functions[0],
+        complex_1D* lapl = laplacian_1D_field (particle1->last_wave_functions[0], 0, ZERO);
+        for (int i = 0; i < n; i ++) {
+            lapl->re[i] *= 0;//10 * nb_steps * dt;
+            lapl->im[i] *= 0;//10 * nb_steps * dt;
+        }
+
+		complex_graph2 = create_complex_1D_graph( lapl,  // on affiche le laplacien
 												 150, window_height/2 - 150, 100,
-												 0, REAL);
+												 0, MODULE_WITH_ARG);
 		
+        destroy_complex_1D(lapl);
+
 		add_graphic_elem(set, complex_graph2, COMPLEX_1D_GRAPH);
 	}
 
@@ -106,14 +121,15 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 
 		case 'd':
 			if (is_created_simulation) {
-				destroy_complex_1D(delta);
-				delta = wave_func_derivative(simul, particle1);
-				filter_order_1_rigorous(&delta, 0.005);
-				for (int i = 0; i < particle1->last_wave_functions[0]->length; i++) {
-					delta->re[i] *= 10 * simul->sim_params->dt;
-					delta->im[i] *= 10 * simul->sim_params->dt;
-				}
+                for (int step = 0; step < nb_steps; step++) {
+				    destroy_complex_1D(delta);
+				    delta = wave_func_derivative(simul, particle1);
+				    for (int i = 0; i < particle1->last_wave_functions[0]->length; i++) {
+					    delta->re[i] *= 10 * simul->sim_params->dt;
+					    delta->im[i] *= 10 * simul->sim_params->dt;
+				    }
 				simulation_next_step(simul);
+                }
 				fft(particle1->last_wave_functions[0], fourier_transform, 0);
 				refresh_simulation_display();
 			}
@@ -126,13 +142,13 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 				argument_disk = create_argument_reference(window_width - 151, window_height - 151, 101);
 				add_graphic_elem(alpha_blend_set, argument_disk, PICTURE);
 
-				simul = create_simulation(1, 0.01, 0.001, 512);
+				simul = create_simulation(dimension, dxyz, dt, n);
 
 				particle1 = create_particle(1.0, -1.0, simul->sim_params->dx, simul->field_V->length);
 				add_particle(simul, particle1);
 
 				for (int i = 0; i < NB_LAST_WAVE_FUNC; i++) {
-					make_centered_gaussian(particle1->last_wave_functions[i], 0.1);
+					make_centered_gaussian(particle1->last_wave_functions[i], dxyz*5);
 					normalize_module_square(particle1->last_wave_functions[i]);
 				}
 
@@ -146,23 +162,32 @@ void keyboard (unsigned char key, int, int) {  // <=> void keybord (unsigned cha
 				fourier_transform = create_complex_1D(simul->field_V->length, 1.0 / simul->sim_params->dx);
 				fft(particle1->last_wave_functions[0], fourier_transform, 0);
 
-                //for (int i = 0; i < 512; i++) {
-                //    fourier_transform->re[i] = 0.1;
-                //    fourier_transform->im[i] = 0.0;
-                //}
+                for (int i = 0; i < n; i++) {
+                    //particle1->last_wave_functions[0]->re[i] = i < n/2 ? 1 : 0;
+                    //particle1->last_wave_functions[0]->im[i] = 0.0;
+                }
                 //fft(fourier_transform, particle1->wave_function, 1);
 
 				complex_graph1 = create_complex_1D_graph(particle1->last_wave_functions[0],
 														150, window_height/2 + 50, 100,
 														1, MODULE_WITH_ARG);
 
-				complex_graph2 = create_complex_1D_graph(particle1->last_wave_functions[0],
+                complex_1D* lapl = laplacian_1D_field (particle1->last_wave_functions[0], 0, ZERO);
+                for (int i = 0; i < n; i ++) {
+                    lapl->re[i] *= 10 * nb_steps * dt;
+                    lapl->im[i] *= 10 * nb_steps * dt;
+                }
+
+				complex_graph2 = create_complex_1D_graph( lapl,  // au lieu de : particle1->last_wave_functions[0],
 														150, window_height/2 - 150, 100,
-														0, REAL);
+														0, MODULE_WITH_ARG);
+
+                destroy_complex_1D(lapl);
 
 				complex_graph3 = create_complex_1D_graph(fourier_transform,
 														150, window_height/2 - 350, 100,
 														0, MODULE_WITH_ARG);
+
 
 				add_graphic_elem(set, complex_graph1, COMPLEX_1D_GRAPH);
 				add_graphic_elem(set, complex_graph2, COMPLEX_1D_GRAPH);
